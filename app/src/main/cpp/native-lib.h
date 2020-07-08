@@ -6,11 +6,17 @@
 #define FFMPEG4ANDROID_NATIVE_LIB_H
 
 #include "../../../../../../Android/Sdk/ndk-bundle/sysroot/usr/include/jni.h"
+
 extern "C"
 JNIEXPORT void
 
 JNICALL
 Java_com_fhl_ffmpegdemo_FFmpegVideoPlayer_render(JNIEnv *,
-                                                  jclass /* this */, jstring, jobject);
+                                                 jclass /* this */, jstring, jobject);
+
+extern "C" JNIEXPORT void
+JNICALL
+Java_com_fhl_ffmpegdemo_FFmpegVideoPlayer_convert(JNIEnv *,
+                                                  jclass /* this */, jstring, jstring);
 
 #endif //FFMPEG4ANDROID_NATIVE_LIB_H

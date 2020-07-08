@@ -34,4 +34,5 @@ public class FFmpegVideoPlayer {
      * which is packaged with this application.
      */
     public static native void render(String path, Surface surface);
+    public static native void convert(String inputPath,String outPath);
 }

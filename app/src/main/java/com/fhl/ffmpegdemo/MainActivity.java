@@ -2,13 +2,10 @@ package com.fhl.ffmpegdemo;
 
 import android.Manifest;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Surface;
 import android.view.View;
 import android.widget.TextView;
 
@@ -22,7 +19,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final String TAG = MainActivity.class.getSimpleName();
     VideoView        videoView;
-    TextView         tv;
+    TextView         tvPlay;
+    TextView         tvConvert;
     PermissionHelper mPermissionHelper;
 
     @Override
@@ -30,34 +28,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         init();
-        tv = (TextView) findViewById(R.id.sample_text);
-        tv.setOnClickListener(this);
-        videoView = findViewById(R.id.videoView);
+
     }
 
     private void init() {
+        initPermission();
+        initView();
+    }
+
+    private void initPermission() {
         mPermissionHelper = new PermissionHelper(this, this);
         mPermissionHelper.requestPermissions();
     }
 
-    private void requestPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-
-        } else {
-
-        }
+    private void initView() {
+        tvPlay = findViewById(R.id.sample_text);
+        tvConvert = findViewById(R.id.tvConvert);
+        tvPlay.setOnClickListener(this);
+        tvConvert.setOnClickListener(this);
+        videoView = findViewById(R.id.videoView);
     }
 
+    private static final String DIR = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Movies" + File.separator;
+
+    String inputPath  = DIR + "test.mp4";
+    String outputPath = DIR + "test.avi";
 
     private void render() {
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "Movies" + File.separator + "test.mp4";
-        File file = new File(path);
+        File file = new File(inputPath);
         if (!file.exists()) {
-            Log.e(TAG, path + " 不存在!");
+            Log.e(TAG, inputPath + " 不存在!");
         } else {
-            Log.d(TAG, path + " 存在!");
+            Log.d(TAG, inputPath + " 存在!");
         }
-        FFmpegVideoPlayer.render(path, videoView.getHolder().getSurface());
+        FFmpegVideoPlayer.render(inputPath, videoView.getHolder().getSurface());
     }
 
     boolean isPlay = false;
@@ -66,16 +70,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sample_text:
-                tv.setVisibility(View.GONE);
-                tv.post(new Runnable() {
+                tvPlay.setVisibility(View.GONE);
+                tvPlay.post(new Runnable() {
                     @Override
                     public void run() {
                         render();
-                        tv.setVisibility(View.VISIBLE);
+                        tvPlay.setVisibility(View.VISIBLE);
                     }
                 });
 
                 break;
+            case R.id.tvConvert:
+                FFmpegVideoPlayer.convert(inputPath, outputPath);
             default:
         }
 
